@@ -1,0 +1,16 @@
+name: CustomRaces
+main: nl.knokko.races.plugin.RacesPlugin
+version: 0.2 Test
+commands:
+  raceprogress:
+    description: manipulate and get the progress of players
+    useage: /raceprogress help
+    aliases: [rp,rprogress,racep,progress]
+  race:
+    description: choose your race
+    useage: /race [race]
+    aliases: [race,rac,ra,r]
+  races:
+    description: list all races
+    useage: /races
+    aliases: [rs]
