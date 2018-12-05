@@ -281,8 +281,8 @@ public class RaceFactory {
 		for(int i = 0; i < effectMapSize; i++)
 			effectResistances.put(new ReflectedEffectType(buffer.readString()), Function.fromBits(buffer));
 		
-		return new AdvancedRace(name, fields, functions, choises, health, damage, strength, speed, attackSpeed,
-				armor, archery, hitFire, attackFire, hitEffects, attackEffects, permEffects, damageResistances, effectResistances);
+		return new AdvancedRace(name, frequency, fields, functions, choises, health, damage, strength, speed, attackSpeed,
+				armor, archery, hitFire, attackFire, hitEffects, attackEffects, permEffects, damageResistances, effectResistances, advancedEquipment);
 	}
 	
 	private static ReflectedEffect readPotionEffect(BitBuffer buffer){
