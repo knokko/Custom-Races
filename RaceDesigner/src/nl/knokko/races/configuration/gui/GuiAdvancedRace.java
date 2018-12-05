@@ -111,10 +111,10 @@ public class GuiAdvancedRace extends Gui {
 			public void click() {
 				try {
 					BitBuffer buffer = new BitBuffer(16000);
-					RaceFactory.saveAsAdvancedRace1(buffer, getFields(), getCustomFunctions(), getChoises(), general.health, 
+					RaceFactory.saveAsAdvancedRace1(buffer, getUpdateFrequency(), getFields(), getCustomFunctions(), getChoises(), general.health, 
 							general.damage, general.strength, general.speed, general.attackSpeed, general.armor, 
 							general.archery, general.onHitFire, general.onAttackFire, getHitPotionEffects(), 
-							getAttackPotionEffects(), getPermanentEffects(), getDamageResistances(), getEffectResistances());
+							getAttackPotionEffects(), getPermanentEffects(), getDamageResistances(), getEffectResistances(), equipment.equipment);
 					//time for a reform...
 					buffer.save(new File(GuiChooseRace.getFolder() + File.separator + nameButton.getText() + ".race"));
 				} catch(Exception ex){
@@ -207,6 +207,10 @@ public class GuiAdvancedRace extends Gui {
 	}
 	
 	//TODO complete all underlying methods
+	private double getUpdateFrequency() {
+		throw new UnsupportedOperationException(); // TODO implement this
+	}
+	
 	private List<ProgressType> getFields(){
 		List<ProgressType> fieldList = fields.fields;
 		if(fieldList == null) throw new NullPointerException("fieldList");
@@ -231,6 +235,14 @@ public class GuiAdvancedRace extends Gui {
 	private PermanentPotionFunction[] getPermanentEffects(){
 		PermanentPotionFunction[] permEffects = new PermanentPotionFunction[0];
 		return permEffects;
+	}
+	
+	private PotionFunction[] getHitPotionEffects() {
+		throw new UnsupportedOperationException(); // TODO implement this
+	}
+	
+	private PotionFunction[] getAttackPotionEffects() {
+		throw new UnsupportedOperationException(); // TODO implement this
 	}
 	
 	private Function[] getDamageResistances(){
@@ -1258,6 +1270,9 @@ public class GuiAdvancedRace extends Gui {
 		Function armor;
 		Function archery;
 		
+		Function onHitFire;
+		Function onAttackFire;
+		
 		private General(){
 			health = new FunctionConstant.Byte((byte) 10);
 			damage = new FunctionConstant.Byte((byte) 0);
@@ -1266,6 +1281,8 @@ public class GuiAdvancedRace extends Gui {
 			attackSpeed = new FunctionConstant.Byte((byte) 1);
 			armor = new FunctionConstant.Byte((byte) 0);
 			archery = new FunctionConstant.Byte((byte) 1);
+			onHitFire = new FunctionConstant.Byte((byte) 0);
+			onAttackFire = new FunctionConstant.Byte((byte) 0);
 			addButtons();
 		}
 		
@@ -1277,6 +1294,8 @@ public class GuiAdvancedRace extends Gui {
 			attackSpeed = race.attackSpeed();
 			armor = race.armor();
 			archery = race.archery();
+			onHitFire = race.onHitFire();
+			onAttackFire = race.onAttackFire();
 			addButtons();
 		}
 		
@@ -1293,6 +1312,13 @@ public class GuiAdvancedRace extends Gui {
 	
 	private class PermanentEffects extends AdvancedScrollMainGui {
 		
+		private PermanentEffects() {
+			
+		}
+		
+		private PermanentEffects(AdvancedRace race) {
+			
+		}
 	}
 	
 	private class DamageResistances extends AdvancedScrollMainGui {
@@ -2353,7 +2379,8 @@ public class GuiAdvancedRace extends Gui {
 		private AdvancedEquipment equipment;
 		
 		private Equipment(){
-			equipment = new AdvancedEquipment();
+			// TODO Initialise this properly
+			equipment = new AdvancedEquipment(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 			try {
 				Field[] fields = equipment.getClass().getDeclaredFields();
 				for(Field field : fields)

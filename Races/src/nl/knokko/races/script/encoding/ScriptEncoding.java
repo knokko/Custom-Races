@@ -1,5 +1,7 @@
 package nl.knokko.races.script.encoding;
 
+import java.awt.Color;
+
 import nl.knokko.races.base.ReflectedCause;
 import nl.knokko.races.conditions.EntityPresentor;
 import nl.knokko.races.conditions.RacePresentor;
@@ -87,7 +89,7 @@ public class ScriptEncoding {
 
 			@Override
 			public void execute(Object... args) {
-				((EntityPresentor)args[0]).addPotionEffect(new ReflectedEffect((ReflectedEffectType)args[1], (Double)args[2], 1, true, false,));
+				((EntityPresentor)args[0]).addPotionEffect(new ReflectedEffect((ReflectedEffectType)args[1], (int) ((Double)args[2] * 20), 1, true, false, Color.RED));
 			}
 		};
 		

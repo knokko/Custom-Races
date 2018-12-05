@@ -37,7 +37,6 @@ import nl.knokko.races.potion.ReflectedEffectType;
 import nl.knokko.races.progress.ProgressType;
 import nl.knokko.races.progress.RaceChoise;
 import nl.knokko.races.progress.ValueType;
-import nl.knokko.races.script.encoding.ScriptEncoding;
 import nl.knokko.races.utils.BitBuffer;
 import static nl.knokko.races.item.ReflectedItem.*;
 
@@ -113,13 +112,15 @@ public class RaceFactory {
 		buffer.addBoolean(equipment.head);
 	}
 	
-	public static void saveAsAdvancedRace1(BitBuffer buffer, List<ProgressType> fields, List<NamedFunction> functions, List<RaceChoise> choises,
+	public static void saveAsAdvancedRace1(BitBuffer buffer, double updateFrequency, List<ProgressType> fields, List<NamedFunction> functions, List<RaceChoise> choises,
 			Function health, Function damage, Function strength, Function speed, Function attackSpeed, Function armor, Function archery,
 			Function hitFireTicks, Function attackFireTicks, PotionFunction[] hitPotions, PotionFunction[] attackPotions,
-			PermanentPotionFunction[] permanentEffects, Function[] damageResistances, Map<ReflectedEffectType,Function> effectResistances){
+			PermanentPotionFunction[] permanentEffects, Function[] damageResistances, Map<ReflectedEffectType,Function> effectResistances,
+			AdvancedRace.AdvancedEquipment equipment){
 		
 		buffer.addByte(ID_ADVANCED_RACE1);
 		
+		buffer.addDouble(updateFrequency);
 		buffer.addInt(fields.size());
 		for(ProgressType pt : fields){
 			buffer.addString(pt.getName());
@@ -169,6 +170,8 @@ public class RaceFactory {
 			buffer.addString(entry.getKey().getType());
 			entry.getValue().save(buffer);
 		}
+		
+		// TODO save armor conditions
 	}
 	
 	public static Race loadRace(String name, BitBuffer buffer){
@@ -228,6 +231,8 @@ public class RaceFactory {
 	}
 	
 	public static AdvancedRace loadAdvancedRace1(String name, BitBuffer buffer){
+		double updateFrequency = buffer.readDouble();
+		
 		int fieldCount = buffer.readInt();
 		List<ProgressType> fields = new ArrayList<ProgressType>(fieldCount);
 		for(int i = 0; i < fieldCount; i++){
@@ -281,8 +286,11 @@ public class RaceFactory {
 		for(int i = 0; i < effectMapSize; i++)
 			effectResistances.put(new ReflectedEffectType(buffer.readString()), Function.fromBits(buffer));
 		
-		return new AdvancedRace(name, frequency, fields, functions, choises, health, damage, strength, speed, attackSpeed,
-				armor, archery, hitFire, attackFire, hitEffects, attackEffects, permEffects, damageResistances, effectResistances, advancedEquipment);
+		// TODO load equipment
+		
+		return new AdvancedRace(name, updateFrequency, fields, functions, choises, health, damage, strength, speed, attackSpeed,
+				armor, archery, hitFire, attackFire, hitEffects, attackEffects, permEffects, 
+				damageResistances, effectResistances, null);
 	}
 	
 	private static ReflectedEffect readPotionEffect(BitBuffer buffer){
@@ -642,8 +650,8 @@ public class RaceFactory {
 		private final Function armorFunction;
 		private final Function archeryFunction;
 		
-		//private final Function onHitFireFunction;
-		//private final Function onAttackFireFunction;
+		private final Function onHitFireFunction;
+		private final Function onAttackFireFunction;
 		
 		//private final PotionFunction[] onHitPotionFunctions;
 		//private final PotionFunction[] onAttackPotionFunctions;
@@ -670,8 +678,8 @@ public class RaceFactory {
 			attackSpeedFunction = attackSpeed;
 			armorFunction = armor;
 			archeryFunction = archery;
-			//onHitFireFunction = onHitFireTicks;
-			//onAttackFireFunction = onAttackFireTicks;
+			onHitFireFunction = onHitFireTicks;
+			onAttackFireFunction = onAttackFireTicks;
 			//onHitPotionFunctions = onHitEffects;
 			//onAttackPotionFunctions = onAttackEffects;
 			this.permanentEffects = permanentEffects;
@@ -780,6 +788,14 @@ public class RaceFactory {
 		
 		public Function archery(){
 			return archeryFunction;
+		}
+		
+		public Function onHitFire() {
+			return onHitFireFunction;
+		}
+		
+		public Function onAttackFire() {
+			return onAttackFireFunction;
 		}
 		
 		public Function[] getDamageResistanceFunctions(){

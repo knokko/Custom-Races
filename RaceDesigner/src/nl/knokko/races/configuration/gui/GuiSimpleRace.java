@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import nl.knokko.races.base.Race;
 import nl.knokko.races.base.RaceFactory;
 import nl.knokko.races.base.RaceFactory.SimpleRace;
 import nl.knokko.races.base.ReflectedCause;
@@ -128,6 +127,7 @@ public class GuiSimpleRace extends Gui {
 					double[] damageCauseResistances = new double[damageResistances.length];
 					for(int index = 0; index < damageResistances.length; index++)
 						damageCauseResistances[index] = damageResistances[index].getDoubleValue();
+					// TODO save equipment properly
 					RaceFactory.saveAsSimpleRace2(buffer, healthButton.getByteValue(), armorButton.getByteValue(),
 							damageButton.getShortValue(), strengthButton.getFloatValue(),
 							speedButton.getFloatValue(), attackSpeedButton.getFloatValue(),
@@ -135,7 +135,12 @@ public class GuiSimpleRace extends Gui {
 							onHitFireButton.getIntValue(), onAttackFireButton.getIntValue(),
 							getPermanentEffects(permanentEffects), getOnHitEffects(onHitEffects),
 							getOnAttackEffects(onAttackEffects), damageCauseResistances,
-							new HashMap<ReflectedEffectType,Float>(), new SimpleRace.SimpleEquipment(leatherBoots, leatherLeggings, leatherChestplate, leatherHelmet, goldBoots, goldLeggings, goldChestplate, goldHelmet, chainBoots, chainLeggings, chainChestplate, chainHelmet, ironBoots, ironLeggings, ironChestplate, ironHelmet, diamondBoots, diamondLeggings, diamondChestplate, diamondHelmet, pumpkin, head));
+							new HashMap<ReflectedEffectType,Float>(), new SimpleRace.SimpleEquipment(
+									true, true, true, true, 
+									true, true, true, true, true, 
+									true, true, true, true, true, 
+									true, true, true, true, 
+									true, true, true, true));
 					buffer.save(new File(GuiChooseRace.getFolder() + File.separator + nameButton.getText() + ".race"));
 				} catch(Exception ex){
 					error = ex.getLocalizedMessage();
