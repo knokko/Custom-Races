@@ -1,6 +1,7 @@
 package nl.knokko.races.plugin.data;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,7 +14,9 @@ import org.bukkit.Bukkit;
 import nl.knokko.races.base.Race;
 import nl.knokko.races.plugin.manager.RaceManager;
 import nl.knokko.races.progress.RaceProgress;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.ByteArrayBitInput;
+import nl.knokko.util.bits.ByteArrayBitOutput;
 
 public class FilePlayerData extends PlayerData {
 	
@@ -48,7 +51,7 @@ public class FilePlayerData extends PlayerData {
 		}
 		else {
 			try {
-				BitBuffer generalBuffer = new BitBuffer(general);
+				BitInput generalBuffer = ByteArrayBitInput.fromFile(general);
 				int raceLength = generalBuffer.readInt();
 				char[] chars = new char[raceLength];
 				for(int i = 0; i < raceLength; i++)
@@ -71,17 +74,22 @@ public class FilePlayerData extends PlayerData {
 	@Override
 	public void onQuit() {
 		try {
-			BitBuffer generalBuffer = new BitBuffer(32 + race.getName().length() * 2);
+			ByteArrayBitOutput generalBuffer = new ByteArrayBitOutput(32 + race.getName().length() * 2);
 			generalBuffer.addInt(race.getName().length());
 			for(int i = 0; i < race.getName().length(); i++)
 				generalBuffer.addChar(race.getName().charAt(i));
-			generalBuffer.save(general);
+			FileOutputStream generalOutput = new FileOutputStream(general);
+			generalOutput.write(generalBuffer.getBytes());
+			generalOutput.close();
+			
 			Iterator<Entry<Race,RaceProgress>> iterator = activeRacesProgress.entrySet().iterator();
 			while(iterator.hasNext()){
 				Entry<Race,RaceProgress> entry = iterator.next();
-				BitBuffer raceBuffer = new BitBuffer(entry.getValue().getExpectedBits());
+				ByteArrayBitOutput raceBuffer = new ByteArrayBitOutput(entry.getValue().getExpectedBits() / 8 + 1);
 				entry.getValue().save(raceBuffer);
-				raceBuffer.save(getFile(entry.getKey()));
+				FileOutputStream raceOutput = new FileOutputStream(getFile(entry.getKey()));
+				raceOutput.write(raceBuffer.getBytes());
+				raceOutput.close();
 			}
 		} catch(Exception ex){
 			Bukkit.getLogger().log(Level.SEVERE, "Couldn't save player data:", ex);
@@ -105,7 +113,7 @@ public class FilePlayerData extends PlayerData {
 		File file = getFile(race);
 		if(file.exists()){
 			try {
-				BitBuffer buffer = new BitBuffer(file);
+				BitInput buffer = ByteArrayBitInput.fromFile(file);
 				data.load(buffer);
 			} catch(IOException ex){
 				throw new RuntimeException("Strange error occured while opening file " + file, ex);

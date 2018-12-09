@@ -71,7 +71,7 @@ public class RaceProgress {
 				System.out.println("It looks like the variable with name " + name + " has been removed.");
 		}
 		
-		Map<String,String> choiseMap = buffer.readStringMap();
+		Map<String,String> choiseMap = buffer.readStringHashMap();
 		for(ChoisePair cp : choises){
 			String value = choiseMap.get(cp.getChoise().getID());
 			if(value != null)

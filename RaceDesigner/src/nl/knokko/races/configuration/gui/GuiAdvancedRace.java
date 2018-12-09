@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +33,7 @@ import nl.knokko.races.progress.ProgressType;
 import nl.knokko.races.progress.RaceChoise;
 import nl.knokko.races.progress.RaceChoise.Value;
 import nl.knokko.races.progress.ValueType;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.ByteArrayBitOutput;
 
 public class GuiAdvancedRace extends Gui {
 	
@@ -110,13 +111,15 @@ public class GuiAdvancedRace extends Gui {
 			@Override
 			public void click() {
 				try {
-					BitBuffer buffer = new BitBuffer(16000);
+					ByteArrayBitOutput buffer = new ByteArrayBitOutput(2000);
 					RaceFactory.saveAsAdvancedRace1(buffer, getUpdateFrequency(), getFields(), getCustomFunctions(), getChoises(), general.health, 
 							general.damage, general.strength, general.speed, general.attackSpeed, general.armor, 
 							general.archery, general.onHitFire, general.onAttackFire, getHitPotionEffects(), 
 							getAttackPotionEffects(), getPermanentEffects(), getDamageResistances(), getEffectResistances(), equipment.equipment);
 					//time for a reform...
-					buffer.save(new File(GuiChooseRace.getFolder() + File.separator + nameButton.getText() + ".race"));
+					FileOutputStream fileOutput = new FileOutputStream(new File(GuiChooseRace.getFolder() + File.separator + nameButton.getText() + ".race"));
+					fileOutput.write(buffer.getBytes());
+					fileOutput.close();
 				} catch(Exception ex){
 					error = ex.getLocalizedMessage();
 					RaceConfigFrame.markChange();

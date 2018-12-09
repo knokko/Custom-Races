@@ -14,7 +14,7 @@ import nl.knokko.races.base.RaceFactory.AdvancedRace;
 import nl.knokko.races.base.RaceFactory.SimpleRace;
 import nl.knokko.races.configuration.RaceConfigFrame;
 import nl.knokko.races.configuration.gui.button.GuiTextButton;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.ByteArrayBitInput;
 
 public class GuiChooseRace extends Gui {
 	
@@ -79,7 +79,7 @@ public class GuiChooseRace extends Gui {
 		@Override
 		public void click() {
 			try {
-				Race race = RaceFactory.loadRace(text, new BitBuffer(file));
+				Race race = RaceFactory.loadRace(text, ByteArrayBitInput.fromFile(file));
 				if(race instanceof RaceFactory.SimpleRace)
 					RaceConfigFrame.instance().setGui(new GuiSimpleRace((SimpleRace) race));
 				if(race instanceof RaceFactory.AdvancedRace)

@@ -15,7 +15,7 @@ import nl.knokko.races.plugin.RacesPlugin;
 import nl.knokko.races.plugin.data.DataManager;
 import nl.knokko.races.potion.ReflectedEffect;
 import nl.knokko.races.progress.RaceProgress;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.ByteArrayBitInput;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -42,7 +42,7 @@ public class RaceManager {
 			File[] files = folder.listFiles();
 			for(File file : files){
 				if(file.getName().endsWith(".race")){
-					Race race = RaceFactory.loadRace(file.getName().substring(0, file.getName().length() - 5), new BitBuffer(file));
+					Race race = RaceFactory.loadRace(file.getName().substring(0, file.getName().length() - 5), ByteArrayBitInput.fromFile(file));
 					if(defaultRace == null || race.getName().equalsIgnoreCase("default"))
 						defaultRace = race;
 				}

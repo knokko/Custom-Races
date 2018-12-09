@@ -1,6 +1,7 @@
 package nl.knokko.races.plugin.data;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,13 +9,15 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import nl.knokko.races.function.Function;
 import nl.knokko.races.function.NamedFunction;
 import nl.knokko.races.plugin.RacesPlugin;
-import nl.knokko.races.utils.BitBuffer;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BooleanArrayBitOutput;
+import nl.knokko.util.bits.ByteArrayBitInput;
 
 public class DataManager {
 	
@@ -26,13 +29,15 @@ public class DataManager {
 			pd.onQuit();
 		try {
 			RacesPlugin.instance().getDataFolder().mkdirs();
-			BitBuffer buffer = new BitBuffer(800);
+			BooleanArrayBitOutput buffer = new BooleanArrayBitOutput(800);
 			buffer.addInt(globalFunctions.size());
 			for(NamedFunction function : globalFunctions){
 				buffer.addString(function.getName());
 				function.getFunction().save(buffer);
 			}
-			buffer.save(new File(RacesPlugin.instance().getDataFolder() + "/globalfunctions.list"));
+			FileOutputStream fileOutput = new FileOutputStream(new File(RacesPlugin.instance().getDataFolder() + "/globalfunctions.list"));
+			fileOutput.write(buffer.getBytes());
+			fileOutput.close();
 		} catch(IOException ioex){
 			Bukkit.getLogger().warning("Failed to save the global functions: " + ioex.getMessage());
 		}
@@ -40,7 +45,8 @@ public class DataManager {
 	
 	public static void start(){
 		try {
-			BitBuffer buffer = new BitBuffer(new File(RacesPlugin.instance().getDataFolder() + "/globalfunctions.list"));
+			File file = new File(RacesPlugin.instance().getDataFolder() + "/globalfunctions.list");
+			BitInput buffer = ByteArrayBitInput.fromFile(file);
 			int size = buffer.readInt();
 			globalFunctions = new ArrayList<NamedFunction>(size);
 			for(int i = 0; i < size; i++)

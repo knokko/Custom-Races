@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ import nl.knokko.races.configuration.replacements.SupportedPermanentEffects;
 import nl.knokko.races.potion.PermanentEffect;
 import nl.knokko.races.potion.ReflectedEffect;
 import nl.knokko.races.potion.ReflectedEffectType;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.ByteArrayBitOutput;
 
 public class GuiSimpleRace extends Gui {
 	
@@ -123,12 +124,12 @@ public class GuiSimpleRace extends Gui {
 			public void click() {
 				try {
 					GuiChooseRace.getFolder().mkdirs();
-					BitBuffer buffer = new BitBuffer(2000);
+					ByteArrayBitOutput output = new ByteArrayBitOutput(2000);
 					double[] damageCauseResistances = new double[damageResistances.length];
 					for(int index = 0; index < damageResistances.length; index++)
 						damageCauseResistances[index] = damageResistances[index].getDoubleValue();
 					// TODO save equipment properly
-					RaceFactory.saveAsSimpleRace2(buffer, healthButton.getByteValue(), armorButton.getByteValue(),
+					RaceFactory.saveAsSimpleRace2(output, healthButton.getByteValue(), armorButton.getByteValue(),
 							damageButton.getShortValue(), strengthButton.getFloatValue(),
 							speedButton.getFloatValue(), attackSpeedButton.getFloatValue(),
 							archeryButton.getFloatValue(),
@@ -141,7 +142,9 @@ public class GuiSimpleRace extends Gui {
 									true, true, true, true, true, 
 									true, true, true, true, 
 									true, true, true, true));
-					buffer.save(new File(GuiChooseRace.getFolder() + File.separator + nameButton.getText() + ".race"));
+					FileOutputStream fileOutput = new FileOutputStream(new File(GuiChooseRace.getFolder() + File.separator + nameButton.getText() + ".race"));
+					fileOutput.write(output.getBytes());
+					fileOutput.close();
 				} catch(Exception ex){
 					error = ex.getLocalizedMessage();
 					RaceConfigFrame.markChange();

@@ -295,7 +295,7 @@ public class RaceFactory {
 				damageResistances, effectResistances, null);
 	}
 	
-	private static ReflectedEffect readPotionEffect(BitBuffer buffer){
+	private static ReflectedEffect readPotionEffect(BitInput buffer){
 		return new ReflectedEffect(new ReflectedEffectType(buffer.readString()), buffer.readInt(), buffer.readByte() + 1, buffer.readBoolean(), buffer.readBoolean(), readColor(buffer));
 	}
 	
