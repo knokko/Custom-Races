@@ -3,11 +3,12 @@ package nl.knokko.races.potion;
 import java.awt.Color;
 
 import nl.knokko.races.base.RaceFactory;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class PermanentEffect {
 	
-	public static PermanentEffect load(BitBuffer buffer){
+	public static PermanentEffect load(BitInput buffer){
 		return new PermanentEffect(new ReflectedEffectType(buffer.readString()), buffer.readInt(), buffer.readBoolean(), buffer.readBoolean(), RaceFactory.readColor(buffer));
 	}
 	
@@ -47,7 +48,7 @@ public class PermanentEffect {
 		return false;
 	}
 	
-	public void save(BitBuffer buffer){
+	public void save(BitOutput buffer){
 		buffer.addString(type.getType());
 		buffer.addInt(level);
 		buffer.addBoolean(ambient);

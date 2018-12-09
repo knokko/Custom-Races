@@ -6,12 +6,13 @@ import java.util.List;
 
 import nl.knokko.races.condition.Condition;
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
 import nl.knokko.races.utils.Maths;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class RaceChoise {
 	
-	public static RaceChoise fromBits(BitBuffer buffer){
+	public static RaceChoise fromBits(BitInput buffer){
 		String id = buffer.readString();
 		byte length = buffer.readByte();
 		String[] choises = new String[length];
@@ -92,15 +93,15 @@ public class RaceChoise {
 		return getDefaultValue();
 	}
 	
-	public void saveValue(Value value, BitBuffer buffer){
+	public void saveValue(Value value, BitOutput buffer){
 		buffer.addNumber(value.getOrdinal(), getValueBitCount(), false);
 	}
 	
-	public Value loadValue(BitBuffer buffer){
+	public Value loadValue(BitInput buffer){
 		return choises[(int) buffer.readNumber(getValueBitCount(), false)];
 	}
 	
-	public void save(BitBuffer buffer){
+	public void save(BitOutput buffer){
 		buffer.addString(getID());
 		buffer.addByte((byte) choises.length);
 		for(Value choise : choises){

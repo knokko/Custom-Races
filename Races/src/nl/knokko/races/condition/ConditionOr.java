@@ -1,7 +1,8 @@
 package nl.knokko.races.condition;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class ConditionOr extends Condition {
 	
@@ -13,7 +14,7 @@ public class ConditionOr extends Condition {
 		this.condition2 = condition2;
 	}
 
-	public ConditionOr(BitBuffer bits) {
+	public ConditionOr(BitInput bits) {
 		super(bits);
 		condition1 = Condition.fromBits(bits);
 		condition2 = Condition.fromBits(bits);
@@ -30,7 +31,7 @@ public class ConditionOr extends Condition {
 	}
 
 	@Override
-	protected void saveSubData(BitBuffer buffer) {
+	protected void saveSubData(BitOutput buffer) {
 		condition1.save(buffer);
 		condition2.save(buffer);
 	}

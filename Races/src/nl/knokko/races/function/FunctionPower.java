@@ -1,7 +1,8 @@
 package nl.knokko.races.function;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class FunctionPower extends Function {
 	
@@ -13,7 +14,7 @@ public class FunctionPower extends Function {
 		this.exponent = exponent;
 	}
 
-	public FunctionPower(BitBuffer buffer) {
+	public FunctionPower(BitInput buffer) {
 		super(buffer);
 		base = Function.fromBits(buffer);
 		exponent = Function.fromBits(buffer);
@@ -25,7 +26,7 @@ public class FunctionPower extends Function {
 	}
 
 	@Override
-	protected void saveSubData(BitBuffer buffer) {
+	protected void saveSubData(BitOutput buffer) {
 		base.save(buffer);
 		exponent.save(buffer);
 	}

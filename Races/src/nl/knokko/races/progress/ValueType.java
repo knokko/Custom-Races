@@ -1,18 +1,19 @@
 package nl.knokko.races.progress;
 
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public abstract class ValueType {
 	
 	public static final ValueType BOOLEAN = new ValueType((byte)-128){
 
 		@Override
-		public void save(BitBuffer buffer, Object value) {
+		public void save(BitOutput buffer, Object value) {
 			buffer.addBoolean((Boolean) value);
 		}
 		
 		@Override
-		public Boolean load(BitBuffer buffer){
+		public Boolean load(BitInput buffer){
 			return buffer.readBoolean();
 		}
 
@@ -30,12 +31,12 @@ public abstract class ValueType {
 	public static final ValueType BYTE = new ValueType((byte)-127){
 
 		@Override
-		public void save(BitBuffer buffer, Object value) {
+		public void save(BitOutput buffer, Object value) {
 			buffer.addByte((Byte) value);
 		}
 		
 		@Override
-		public Byte load(BitBuffer buffer){
+		public Byte load(BitInput buffer){
 			return buffer.readByte();
 		}
 
@@ -53,12 +54,12 @@ public abstract class ValueType {
 	public static final ValueType CHAR = new ValueType((byte)-126){
 
 		@Override
-		public void save(BitBuffer buffer, Object value) {
+		public void save(BitOutput buffer, Object value) {
 			buffer.addChar((Character) value);
 		}
 		
 		@Override
-		public Character load(BitBuffer buffer){
+		public Character load(BitInput buffer){
 			return buffer.readChar();
 		}
 
@@ -78,12 +79,12 @@ public abstract class ValueType {
 	public static final ValueType SHORT = new ValueType((byte)-125){
 
 		@Override
-		public void save(BitBuffer buffer, Object value) {
+		public void save(BitOutput buffer, Object value) {
 			buffer.addShort((Short) value);
 		}
 		
 		@Override
-		public Short load(BitBuffer buffer){
+		public Short load(BitInput buffer){
 			return buffer.readShort();
 		}
 
@@ -101,12 +102,12 @@ public abstract class ValueType {
 	public static final ValueType INT = new ValueType((byte)-124){
 
 		@Override
-		public void save(BitBuffer buffer, Object value) {
+		public void save(BitOutput buffer, Object value) {
 			buffer.addInt((Integer)value);
 		}
 
 		@Override
-		public Integer load(BitBuffer buffer) {
+		public Integer load(BitInput buffer) {
 			return buffer.readInt();
 		}
 
@@ -124,12 +125,12 @@ public abstract class ValueType {
 	public static final ValueType LONG = new ValueType((byte)-123){
 
 		@Override
-		public void save(BitBuffer buffer, Object value) {
+		public void save(BitOutput buffer, Object value) {
 			buffer.addLong((Long) value);
 		}
 
 		@Override
-		public Long load(BitBuffer buffer) {
+		public Long load(BitInput buffer) {
 			return buffer.readLong();
 		}
 
@@ -147,12 +148,12 @@ public abstract class ValueType {
 	public static final ValueType FLOAT = new ValueType((byte)-122){
 
 		@Override
-		public void save(BitBuffer buffer, Object value) {
+		public void save(BitOutput buffer, Object value) {
 			buffer.addFloat((Float) value);
 		}
 
 		@Override
-		public Float load(BitBuffer buffer) {
+		public Float load(BitInput buffer) {
 			return buffer.readFloat();
 		}
 
@@ -170,12 +171,12 @@ public abstract class ValueType {
 	public static final ValueType DOUBLE = new ValueType((byte)-121){
 
 		@Override
-		public void save(BitBuffer buffer, Object value) {
+		public void save(BitOutput buffer, Object value) {
 			buffer.addDouble((Double) value);
 		}
 
 		@Override
-		public Double load(BitBuffer buffer) {
+		public Double load(BitInput buffer) {
 			return buffer.readDouble();
 		}
 
@@ -193,7 +194,7 @@ public abstract class ValueType {
 	public static final ValueType STRING = new ValueType((byte)-120){
 
 		@Override
-		public void save(BitBuffer buffer, Object value) {
+		public void save(BitOutput buffer, Object value) {
 			String s = (String) value;
 			buffer.addInt(s.length());
 			for(int i = 0; i < s.length(); i++)
@@ -201,7 +202,7 @@ public abstract class ValueType {
 		}
 
 		@Override
-		public String load(BitBuffer buffer) {
+		public String load(BitInput buffer) {
 			int length = buffer.readInt();
 			char[] chars = new char[length];
 			for(int i = 0; i < length; i++)
@@ -236,9 +237,9 @@ public abstract class ValueType {
 		return typeID;
 	}
 	
-	public abstract void save(BitBuffer buffer, Object value);
+	public abstract void save(BitOutput buffer, Object value);
 	
-	public abstract Object load(BitBuffer buffer);
+	public abstract Object load(BitInput buffer);
 	
 	//public abstract Object getDefaultValue();//TODO use default value of the variable instead
 	

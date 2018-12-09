@@ -1,7 +1,8 @@
 package nl.knokko.races.function;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public abstract class Function {
 	
@@ -21,10 +22,10 @@ public abstract class Function {
 		FunctionTime.class, FunctionTemperature.class, FunctionDimension.class
 	};
 	
-	public static Function fromBits(BitBuffer buffer){
+	public static Function fromBits(BitInput buffer){
 		byte idIndex = (byte) buffer.readNumber(ID_BITS, false);
 		try {
-			return (Function) ID_MAP[idIndex].getConstructor(BitBuffer.class).newInstance(buffer);
+			return (Function) ID_MAP[idIndex].getConstructor(BitInput.class).newInstance(buffer);
 		} catch(Exception ex){
 			throw new IllegalArgumentException(ex);
 		}
@@ -32,9 +33,9 @@ public abstract class Function {
 	
 	public Function(){}
 	
-	public Function(BitBuffer buffer){}
+	public Function(BitInput buffer){}
 	
-	public final void save(BitBuffer buffer){
+	public final void save(BitOutput buffer){
 		buffer.addNumber(getID(), ID_BITS, false);
 		saveSubData(buffer);
 	}
@@ -49,7 +50,7 @@ public abstract class Function {
 		return (float) value(params);
 	}
 	
-	protected abstract void saveSubData(BitBuffer buffer);
+	protected abstract void saveSubData(BitOutput buffer);
 	
 	public abstract String toString();
 	

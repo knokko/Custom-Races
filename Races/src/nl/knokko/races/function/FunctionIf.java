@@ -2,7 +2,8 @@ package nl.knokko.races.function;
 
 import nl.knokko.races.condition.Condition;
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class FunctionIf extends Function {
 	
@@ -15,7 +16,7 @@ public class FunctionIf extends Function {
 		this.condition = condition;
 	}
 
-	public FunctionIf(BitBuffer buffer) {
+	public FunctionIf(BitInput buffer) {
 		super(buffer);
 		function = Function.fromBits(buffer);
 		condition = Condition.fromBits(buffer);
@@ -27,7 +28,7 @@ public class FunctionIf extends Function {
 	}
 
 	@Override
-	protected void saveSubData(BitBuffer buffer) {
+	protected void saveSubData(BitOutput buffer) {
 		function.save(buffer);
 		condition.save(buffer);
 	}

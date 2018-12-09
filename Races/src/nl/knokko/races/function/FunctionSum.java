@@ -1,7 +1,8 @@
 package nl.knokko.races.function;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class FunctionSum extends Function {
 	
@@ -13,7 +14,7 @@ public class FunctionSum extends Function {
 		this.function2 = function2;
 	}
 
-	public FunctionSum(BitBuffer buffer) {
+	public FunctionSum(BitInput buffer) {
 		super(buffer);
 		function1 = Function.fromBits(buffer);
 		function2 = Function.fromBits(buffer);
@@ -25,7 +26,7 @@ public class FunctionSum extends Function {
 	}
 
 	@Override
-	protected void saveSubData(BitBuffer buffer) {
+	protected void saveSubData(BitOutput buffer) {
 		function1.save(buffer);
 		function2.save(buffer);
 	}

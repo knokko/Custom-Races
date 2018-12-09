@@ -1,7 +1,8 @@
 package nl.knokko.races.function;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class FunctionRound extends Function {
 	
@@ -13,7 +14,7 @@ public class FunctionRound extends Function {
 		mode = roundingMode;
 	}
 
-	public FunctionRound(BitBuffer buffer) {
+	public FunctionRound(BitInput buffer) {
 		super(buffer);
 		mode = Mode.values()[(int) buffer.readNumber(Mode.BITS, false)];
 		function = Function.fromBits(buffer);
@@ -25,7 +26,7 @@ public class FunctionRound extends Function {
 	}
 
 	@Override
-	protected void saveSubData(BitBuffer buffer) {
+	protected void saveSubData(BitOutput buffer) {
 		buffer.addNumber(mode.ordinal(), Mode.BITS, false);
 		function.save(buffer);
 	}

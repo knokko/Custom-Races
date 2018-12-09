@@ -37,7 +37,9 @@ import nl.knokko.races.potion.ReflectedEffectType;
 import nl.knokko.races.progress.ProgressType;
 import nl.knokko.races.progress.RaceChoise;
 import nl.knokko.races.progress.ValueType;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
+
 import static nl.knokko.races.item.ReflectedItem.*;
 
 public class RaceFactory {
@@ -45,7 +47,7 @@ public class RaceFactory {
 	private static final byte ID_SIMPLE_RACE1 = -127;
 	private static final byte ID_ADVANCED_RACE1 = -126;
 	
-	public static void saveAsSimpleRace2(BitBuffer buffer, byte extraHealth, byte extraArmor, short extraDamage, 
+	public static void saveAsSimpleRace2(BitOutput buffer, byte extraHealth, byte extraArmor, short extraDamage, 
 			float strengthMultiplier, float speedMultiplier, float attackSpeedMultiplier, 
 			float arrowDamageMultiplier, int onHitFireTicks, int onAttackFireTicks, 
 			Collection<PermanentEffect> permanentEffects, List<ReflectedEffect> onHitEffects, 
@@ -112,7 +114,7 @@ public class RaceFactory {
 		buffer.addBoolean(equipment.head);
 	}
 	
-	public static void saveAsAdvancedRace1(BitBuffer buffer, double updateFrequency, List<ProgressType> fields, List<NamedFunction> functions, List<RaceChoise> choises,
+	public static void saveAsAdvancedRace1(BitOutput buffer, double updateFrequency, List<ProgressType> fields, List<NamedFunction> functions, List<RaceChoise> choises,
 			Function health, Function damage, Function strength, Function speed, Function attackSpeed, Function armor, Function archery,
 			Function hitFireTicks, Function attackFireTicks, PotionFunction[] hitPotions, PotionFunction[] attackPotions,
 			PermanentPotionFunction[] permanentEffects, Function[] damageResistances, Map<ReflectedEffectType,Function> effectResistances,
@@ -174,7 +176,7 @@ public class RaceFactory {
 		// TODO save armor conditions
 	}
 	
-	public static Race loadRace(String name, BitBuffer buffer){
+	public static Race loadRace(String name, BitInput buffer){
 		byte type = buffer.readByte();
 		if(type == ID_SIMPLE_RACE1)
 			return loadSimpleRace2(name, buffer);
@@ -183,7 +185,7 @@ public class RaceFactory {
 		throw new IllegalArgumentException("Unknown type: " + type);
 	}
 	
-	public static SimpleRace loadSimpleRace2(String name, BitBuffer buffer){
+	public static SimpleRace loadSimpleRace2(String name, BitInput buffer){
 		byte health = buffer.readByte();
 		byte armor = buffer.readByte();
 		short damage = buffer.readShort();
@@ -230,7 +232,7 @@ public class RaceFactory {
 				effectResistances, equipment);
 	}
 	
-	public static AdvancedRace loadAdvancedRace1(String name, BitBuffer buffer){
+	public static AdvancedRace loadAdvancedRace1(String name, BitInput buffer){
 		double updateFrequency = buffer.readDouble();
 		
 		int fieldCount = buffer.readInt();
@@ -297,7 +299,7 @@ public class RaceFactory {
 		return new ReflectedEffect(new ReflectedEffectType(buffer.readString()), buffer.readInt(), buffer.readByte() + 1, buffer.readBoolean(), buffer.readBoolean(), readColor(buffer));
 	}
 	
-	private static void savePotionEffect(BitBuffer buffer, ReflectedEffect effect){
+	private static void savePotionEffect(BitOutput buffer, ReflectedEffect effect){
 		buffer.addString(effect.getType().getType());
 		buffer.addInt(effect.getDuration());
 		buffer.addByte(effect.getAmplifier());
@@ -306,11 +308,11 @@ public class RaceFactory {
 		saveColor(buffer, effect.getColor());
 	}
 	
-	public static Color readColor(BitBuffer buffer){
+	public static Color readColor(BitInput buffer){
 		return new Color(buffer.readByte() + 128, buffer.readByte() + 128, buffer.readByte() + 128);
 	}
 	
-	public static void saveColor(BitBuffer buffer, Color color){
+	public static void saveColor(BitOutput buffer, Color color){
 		if(color != null){
 			buffer.addByte((byte) (color.getRed() - 128));
 			buffer.addByte((byte) (color.getGreen() - 128));

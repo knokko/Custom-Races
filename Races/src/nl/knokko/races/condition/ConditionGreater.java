@@ -2,7 +2,8 @@ package nl.knokko.races.condition;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
 import nl.knokko.races.function.Function;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class ConditionGreater extends Condition {
 	
@@ -14,7 +15,7 @@ public class ConditionGreater extends Condition {
 		this.f2 = goal;
 	}
 
-	public ConditionGreater(BitBuffer bits) {
+	public ConditionGreater(BitInput bits) {
 		super(bits);
 		f1 = Function.fromBits(bits);
 		f2 = Function.fromBits(bits);
@@ -31,7 +32,7 @@ public class ConditionGreater extends Condition {
 	}
 
 	@Override
-	protected void saveSubData(BitBuffer buffer) {
+	protected void saveSubData(BitOutput buffer) {
 		f1.save(buffer);
 		f2.save(buffer);
 	}

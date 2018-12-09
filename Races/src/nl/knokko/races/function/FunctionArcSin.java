@@ -1,7 +1,8 @@
 package nl.knokko.races.function;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class FunctionArcSin extends Function {
 	
@@ -11,7 +12,7 @@ public class FunctionArcSin extends Function {
 		this.function = function;
 	}
 
-	public FunctionArcSin(BitBuffer buffer) {
+	public FunctionArcSin(BitInput buffer) {
 		super(buffer);
 		function = Function.fromBits(buffer);
 	}
@@ -22,7 +23,7 @@ public class FunctionArcSin extends Function {
 	}
 
 	@Override
-	protected void saveSubData(BitBuffer buffer) {
+	protected void saveSubData(BitOutput buffer) {
 		function.save(buffer);
 	}
 

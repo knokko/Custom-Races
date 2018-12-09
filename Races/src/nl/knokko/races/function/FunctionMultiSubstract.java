@@ -1,7 +1,8 @@
 package nl.knokko.races.function;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class FunctionMultiSubstract extends Function {
 
@@ -20,7 +21,7 @@ private static final byte AMOUNT_BITS = 4;
 		functions = functionsToSum;
 	}
 
-	public FunctionMultiSubstract(BitBuffer buffer) {
+	public FunctionMultiSubstract(BitInput buffer) {
 		super(buffer);
 		functions = new Function[(int) buffer.readNumber(AMOUNT_BITS, false) + MIN_AMOUNT];
 		for(int index = 0; index < functions.length; index++)
@@ -36,7 +37,7 @@ private static final byte AMOUNT_BITS = 4;
 	}
 
 	@Override
-	protected void saveSubData(BitBuffer buffer) {
+	protected void saveSubData(BitOutput buffer) {
 		buffer.addNumber(functions.length - MIN_AMOUNT, AMOUNT_BITS, false);
 		for(Function f : functions)
 			f.save(buffer);

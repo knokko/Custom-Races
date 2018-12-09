@@ -7,7 +7,8 @@ import java.util.Map;
 
 import nl.knokko.races.base.Race;
 import nl.knokko.races.progress.RaceChoise.Value;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class RaceProgress {
 	
@@ -38,7 +39,7 @@ public class RaceProgress {
 		return race;
 	}
 	
-	public void save(BitBuffer buffer){
+	public void save(BitOutput buffer){
 		buffer.addInt(values.length);
 		for(ValuePair vp : values){
 			buffer.addString(vp.getType().getName());
@@ -52,7 +53,7 @@ public class RaceProgress {
 			//cp.getChoise().saveValue(cp.getValue(), buffer);
 	}
 	
-	public void load(BitBuffer buffer){
+	public void load(BitInput buffer){
 		//for(ValuePair vp : values)
 			//vp.setValue(vp.getType().getType().load(buffer));
 		

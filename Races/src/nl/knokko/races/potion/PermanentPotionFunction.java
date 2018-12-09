@@ -5,7 +5,8 @@ import java.awt.Color;
 import nl.knokko.races.condition.Condition;
 import nl.knokko.races.conditions.RaceStatsConditions;
 import nl.knokko.races.function.Function;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class PermanentPotionFunction {
 	
@@ -20,7 +21,7 @@ public class PermanentPotionFunction {
 	private Function green;
 	private Function blue;
 	
-	public static PermanentPotionFunction fromBits(BitBuffer buffer){
+	public static PermanentPotionFunction fromBits(BitInput buffer){
 		return new PermanentPotionFunction(new ReflectedEffectType(buffer.readString()), Function.fromBits(buffer),
 				Condition.fromBits(buffer), Condition.fromBits(buffer), Function.fromBits(buffer), Function.fromBits(buffer), Function.fromBits(buffer));
 	}
@@ -73,7 +74,7 @@ public class PermanentPotionFunction {
 		return null;
 	}
 	
-	public void save(BitBuffer buffer){
+	public void save(BitOutput buffer){
 		buffer.addString(type.getType());
 		level.save(buffer);
 		particles.save(buffer);

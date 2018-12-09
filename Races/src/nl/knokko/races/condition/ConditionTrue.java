@@ -1,13 +1,14 @@
 package nl.knokko.races.condition;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class ConditionTrue extends Condition {
 
 	public ConditionTrue() {}
 
-	public ConditionTrue(BitBuffer bits) {
+	public ConditionTrue(BitInput bits) {
 		super(bits);
 	}
 
@@ -22,7 +23,7 @@ public class ConditionTrue extends Condition {
 	}
 
 	@Override
-	protected void saveSubData(BitBuffer buffer) {}
+	protected void saveSubData(BitOutput buffer) {}
 
 	@Override
 	public String toString() {

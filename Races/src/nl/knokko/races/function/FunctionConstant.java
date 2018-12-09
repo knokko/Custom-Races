@@ -1,7 +1,8 @@
 package nl.knokko.races.function;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public abstract class FunctionConstant {
 	
@@ -38,7 +39,7 @@ public abstract class FunctionConstant {
 			this.value = value;
 		}
 		
-		public Byte(BitBuffer buffer){
+		public Byte(BitInput buffer){
 			value = buffer.readByte();
 		}
 
@@ -48,7 +49,7 @@ public abstract class FunctionConstant {
 		}
 
 		@Override
-		public void saveSubData(BitBuffer buffer) {
+		public void saveSubData(BitOutput buffer) {
 			buffer.addByte(value);
 		}
 
@@ -92,7 +93,7 @@ public abstract class FunctionConstant {
 			this.value = value;
 		}
 		
-		public Short(BitBuffer buffer){
+		public Short(BitInput buffer){
 			value = buffer.readShort();
 		}
 
@@ -102,7 +103,7 @@ public abstract class FunctionConstant {
 		}
 
 		@Override
-		public void saveSubData(BitBuffer buffer) {
+		public void saveSubData(BitOutput buffer) {
 			buffer.addShort(value);
 		}
 
@@ -146,7 +147,7 @@ public abstract class FunctionConstant {
 			this.value = value;
 		}
 		
-		public Char(BitBuffer buffer){
+		public Char(BitInput buffer){
 			value = buffer.readChar();
 		}
 
@@ -156,7 +157,7 @@ public abstract class FunctionConstant {
 		}
 
 		@Override
-		public void saveSubData(BitBuffer buffer) {
+		public void saveSubData(BitOutput buffer) {
 			buffer.addChar(value);
 		}
 
@@ -200,7 +201,7 @@ public abstract class FunctionConstant {
 			this.value = value;
 		}
 		
-		public Int(BitBuffer buffer){
+		public Int(BitInput buffer){
 			value = buffer.readInt();
 		}
 
@@ -210,7 +211,7 @@ public abstract class FunctionConstant {
 		}
 
 		@Override
-		public void saveSubData(BitBuffer buffer) {
+		public void saveSubData(BitOutput buffer) {
 			buffer.addInt(value);
 		}
 
@@ -254,7 +255,7 @@ public abstract class FunctionConstant {
 			this.value = value;
 		}
 		
-		public Float(BitBuffer buffer){
+		public Float(BitInput buffer){
 			value = buffer.readFloat();
 		}
 
@@ -264,7 +265,7 @@ public abstract class FunctionConstant {
 		}
 
 		@Override
-		public void saveSubData(BitBuffer buffer) {
+		public void saveSubData(BitOutput buffer) {
 			buffer.addFloat(value);
 		}
 
@@ -308,7 +309,7 @@ public abstract class FunctionConstant {
 			this.value = value;
 		}
 		
-		public Long(BitBuffer buffer){
+		public Long(BitInput buffer){
 			value = buffer.readLong();
 		}
 
@@ -318,7 +319,7 @@ public abstract class FunctionConstant {
 		}
 
 		@Override
-		public void saveSubData(BitBuffer buffer) {
+		public void saveSubData(BitOutput buffer) {
 			buffer.addLong(value);
 		}
 
@@ -362,7 +363,7 @@ public abstract class FunctionConstant {
 			this.value = value;
 		}
 		
-		public Double(BitBuffer buffer){
+		public Double(BitInput buffer){
 			value = buffer.readDouble();
 		}
 
@@ -372,7 +373,7 @@ public abstract class FunctionConstant {
 		}
 
 		@Override
-		public void saveSubData(BitBuffer buffer) {
+		public void saveSubData(BitOutput buffer) {
 			buffer.addDouble(value);
 		}
 

@@ -1,7 +1,8 @@
 package nl.knokko.races.function;
 
 import nl.knokko.races.conditions.RaceStatsConditions;
-import nl.knokko.races.utils.BitBuffer;
+import nl.knokko.util.bits.BitInput;
+import nl.knokko.util.bits.BitOutput;
 
 public class FunctionVariable extends Function {
 	
@@ -11,7 +12,7 @@ public class FunctionVariable extends Function {
 		name = variableName;
 	}
 
-	public FunctionVariable(BitBuffer buffer) {
+	public FunctionVariable(BitInput buffer) {
 		super(buffer);
 		name = buffer.readString();
 	}
@@ -22,7 +23,7 @@ public class FunctionVariable extends Function {
 	}
 
 	@Override
-	public void saveSubData(BitBuffer buffer) {
+	public void saveSubData(BitOutput buffer) {
 		buffer.addString(name);
 	}
 
