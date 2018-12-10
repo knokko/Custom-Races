@@ -1,9 +1,9 @@
 package nl.knokko.races.plugin.command;
 
+import nl.knokko.core.plugin.player.Players;
 import nl.knokko.races.plugin.data.DataManager;
 import nl.knokko.races.plugin.data.PlayerData;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,7 +19,7 @@ public class CommandRaceProgress implements CommandExecutor {
 		}
 		if(args.length == 3){
 			if(args[0].equals("get")){
-				Player player = Bukkit.getPlayer(args[1]);
+				Player player = Players.getOnline(args[1]);
 				if(player == null){
 					sender.sendMessage(ChatColor.RED + "Can't find online player with name " + args[1]);
 					return false;
@@ -35,7 +35,7 @@ public class CommandRaceProgress implements CommandExecutor {
 		}
 		if(args.length == 4){
 			if(args[0].equals("set")){
-				Player player = Bukkit.getPlayer(args[1]);
+				Player player = Players.getOnline(args[1]);
 				if(player == null){
 					sender.sendMessage(ChatColor.RED + "Can't find online player with name " + args[1]);
 					return false;

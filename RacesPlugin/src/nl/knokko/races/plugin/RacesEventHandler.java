@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import nl.knokko.core.plugin.player.Players;
 import nl.knokko.races.base.Race;
 import nl.knokko.races.base.ReflectedCause;
 import nl.knokko.races.block.ReflectedBlock;
@@ -263,7 +264,7 @@ public class RacesEventHandler implements Listener {
 			int index2 = cmd.indexOf(" ", index1);
 			if(index1 != -1 && index2 != -1){
 				String playerName = cmd.substring(index1, index2);
-				Player player = Bukkit.getPlayer(playerName);
+				Player player = Players.getOnline(playerName);
 				if(player != null)
 					checkEffects(player);
 			}
@@ -278,7 +279,7 @@ public class RacesEventHandler implements Listener {
 			int index2 = cmd.indexOf(" ", index1);
 			if(index1 != -1 && index2 != -1){
 				String playerName = cmd.substring(index1, index2);
-				Player player = Bukkit.getPlayer(playerName);
+				Player player = Players.getOnline(playerName);
 				if(player != null)
 					checkEffects(player);
 			}
