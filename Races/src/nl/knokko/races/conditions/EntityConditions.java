@@ -12,6 +12,8 @@ public interface EntityConditions {
 	
 	double getHearts();
 	
+	double getAttackDamage();
+	
 	double getMaxHearts();
 	
 	/**

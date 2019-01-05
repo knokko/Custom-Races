@@ -35,7 +35,6 @@ public class RacesPlugin extends JavaPlugin {
 		DataManager.start();
 		RaceManager.enable();
 		Bukkit.getPluginManager().registerEvents(new RacesEventHandler(), this);
-		Bukkit.getPluginManager().registerEvents(new RacesMenu(), this);
 		RacesEventHandler.startUpdater();
 		getCommand("raceprogress").setExecutor(new CommandRaceProgress());
 		getCommand("race").setExecutor(new CommandRace());

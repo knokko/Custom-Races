@@ -64,6 +64,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -140,7 +141,11 @@ public class RacesEventHandler implements Listener {
 				applyEffects((LivingEntity) event.getEntity(), race.getOnAttackPotionEffects(cond));
 			event.setDamage(event.getDamage() * race.getStrengthMultiplier(cond) + race.getExtraDamage(cond));
 			*/
-			RaceAttackEntityEvent entityEvent = new RaceAttackEntityEvent(RaceManager.getRacePresentor(damager, race, cond), RaceManager.getEntityPresentor(event.getEntity()), damage);
+			ReflectedItem weapon = null;
+			ItemStack mainWeapon = damager.getInventory().getItemInMainHand();
+			if (mainWeapon != null && mainWeapon.getType() != Material.AIR && mainWeapon.getAmount() > 0)
+				weapon = itemFromBukkitMaterial(mainWeapon.getType());
+			RaceAttackEntityEvent entityEvent = new RaceAttackEntityEvent(RaceManager.getRacePresentor(damager, race, cond), RaceManager.getEntityPresentor(event.getEntity()), weapon, damage);
 			race.raceAttacksEntity(entityEvent);
 			damage = entityEvent.getDamage();
 			if(damage <= 0){
@@ -291,13 +296,13 @@ public class RacesEventHandler implements Listener {
 		DataManager.join(event.getPlayer());
 		EffectUpdater.register(event.getPlayer());
 		checkEffects(event.getPlayer());
-		updatePlayerAttributes(event.getPlayer());
+		updatePlayerAttributesAndLevel(event.getPlayer());
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void applyRaceAttributes(PlayerRespawnEvent event){
 		checkEffects(event.getPlayer());
-		updatePlayerAttributes(event.getPlayer());
+		updatePlayerAttributesAndLevel(event.getPlayer());
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -370,7 +375,7 @@ public class RacesEventHandler implements Listener {
 		removeModifier(player, Attribute.GENERIC_ATTACK_SPEED, ID_ATTACK_SPEED);
 	}
 	
-	private static void updatePlayerAttributes(Player player){
+	private static void updatePlayerAttributesAndLevel(Player player){
 		Race race = RaceManager.getRace(player);
 		RaceStatsConditions stats = RaceManager.getConditions(player, race);
 		clearPlayerAttributes(player);
@@ -378,6 +383,14 @@ public class RacesEventHandler implements Listener {
 		player.getAttribute(Attribute.GENERIC_MAX_HEALTH).addModifier(new AttributeModifier(ID_HEALTH, "rpg.race.health", race.getExtraHealth(stats), Operation.ADD_NUMBER));
 		player.getAttribute(Attribute.GENERIC_ARMOR).addModifier(new AttributeModifier(ID_ARMOR, "rpg.race.armor", race.getExtraArmor(stats), Operation.ADD_NUMBER));
 		player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).addModifier(new AttributeModifier(ID_ATTACK_SPEED, "rpg.race.berserk", race.getAttackSpeedMultiplier(stats) - 1, Operation.ADD_SCALAR));
+		float levelProgress = race.getLevelProgressToShow(stats);
+		if (levelProgress == levelProgress) {
+			player.setExp(levelProgress);
+		}
+		int level = race.getLevelToShow(stats);
+		if (level != -1) {
+			player.setLevel(level);
+		}
 	}
 	
 	private static AttributeModifier getModifier(Player player, Attribute attribute, UUID id){
@@ -490,7 +503,7 @@ public class RacesEventHandler implements Listener {
 					for(PermanentEffect pe : currentEffects)
 						player.addPotionEffect(new PotionEffect(toBukkitEffectType(pe.getType()), Integer.MAX_VALUE, pe.getAmplifier(), pe.isAmbient(), pe.hasParticles(), toBukkitColor(pe.getColor())));
 				}
-				updatePlayerAttributes(player);
+				updatePlayerAttributesAndLevel(player);
 				previousEffects = currentEffects;
 			}
 			
@@ -515,7 +528,7 @@ public class RacesEventHandler implements Listener {
 		@Override
 		public void run() {
 			for(PlayerEntry player : players){
-				updatePlayerAttributes(player.player);
+				updatePlayerAttributesAndLevel(player.player);
 				race.raceUpdate(player.event);
 			}
 		}

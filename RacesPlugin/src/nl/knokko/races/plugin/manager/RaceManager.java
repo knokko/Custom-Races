@@ -100,6 +100,10 @@ public class RaceManager {
 		return defaultRace;
 	}
 	
+	public static void setDefaultRace(Race newDefaultRace) {
+		defaultRace = newDefaultRace;
+	}
+	
 	public static RaceProgress getProgress(Player player, Race race){
 		return DataManager.getPlayerData(player).getProgress(race);
 	}
@@ -191,6 +195,14 @@ public class RaceManager {
 		public double getMaxHearts() {
 			if(entity instanceof Attributable)
 				return ((Attributable) entity).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2;
+			return 0;
+		}
+		
+		@Override
+		public double getAttackDamage() {
+			if (entity instanceof Attributable) {
+				return ((Attributable) entity).getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue();
+			}
 			return 0;
 		}
 
@@ -351,6 +363,11 @@ public class RaceManager {
 		@Override
 		public double getHearts() {
 			return player.getHealth() / 2;
+		}
+		
+		@Override
+		public double getAttackDamage() {
+			return player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue();
 		}
 
 		@Override

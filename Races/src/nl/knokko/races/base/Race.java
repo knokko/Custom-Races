@@ -165,4 +165,25 @@ public abstract class Race {
 	public abstract void raceKilledByRaceEvent(RaceKilledByRaceEvent event);
 	
 	public abstract void raceDie(RaceDieEvent event);
+	
+	/**
+	 * Determines the progress of a level-up that a player should see in his xp bar. It should have a value
+	 * between 0 and 1 if this is used. The value should be NaN if the vanilla level system should be
+	 * preserved.
+	 * @param stats
+	 * @return The progress to the next level or NaN if the vanilla level should be used
+	 */
+	public float getLevelProgressToShow(RaceStatsConditions stats) {
+		return Float.NaN;
+	}
+	
+	/**
+	 * Determines the level a player should see above his xp bar. It should be -1 if the vanilla level
+	 * system should be preserved.
+	 * @param stats
+	 * @return The level to show above the xp bar, or -1 to preserve vanilla level system
+	 */
+	public int getLevelToShow(RaceStatsConditions stats) {
+		return -1;
+	}
 }

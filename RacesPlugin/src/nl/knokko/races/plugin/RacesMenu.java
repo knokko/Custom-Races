@@ -15,9 +15,8 @@ import nl.knokko.races.progress.RaceChoise.Value;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
-public class RacesMenu implements Listener {
+public class RacesMenu {
 	
 	private static Menu raceMenu = new Menu("Race Menu", 9);
 	

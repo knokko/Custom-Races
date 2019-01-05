@@ -9,6 +9,7 @@ public class ChoisePair {
 
 	public ChoisePair(RaceChoise choise) {
 		this.choise = choise;
+		value = choise.getDefaultValue();
 	}
 	
 	@Override

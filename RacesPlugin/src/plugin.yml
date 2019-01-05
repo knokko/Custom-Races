@@ -1,6 +1,7 @@
 name: CustomRaces
 main: nl.knokko.races.plugin.RacesPlugin
-version: 0.2 Test
+version: 0.3 Test
+depend: [KnokkoCore]
 commands:
   raceprogress:
     description: manipulate and get the progress of players
