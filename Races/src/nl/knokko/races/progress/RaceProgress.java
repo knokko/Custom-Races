@@ -1,5 +1,6 @@
 package nl.knokko.races.progress;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -49,8 +50,8 @@ public class RaceProgress {
 		for(ChoisePair cp : choises)
 			choiseMap.put(cp.getChoise().getID(), cp.getValue().getName());
 		buffer.addStringMap(choiseMap);
-		//for(ChoisePair cp : choises)
-			//cp.getChoise().saveValue(cp.getValue(), buffer);
+		for(ChoisePair cp : choises)
+			cp.getChoise().saveValue(cp.getValue(), buffer);
 	}
 	
 	public void load(BitInput buffer){
@@ -81,6 +82,7 @@ public class RaceProgress {
 				System.out.println("The value for choise " + cp.getChoise().getID() + " can't be loaded, is it new?");
 			}
 		}
+		System.out.println("Choises are " + choises);
 		for(ChoisePair cp : choises)
 			cp.setValue(cp.getChoise().loadValue(buffer));
 	}
@@ -98,6 +100,7 @@ public class RaceProgress {
 		for(ValuePair vp : values)
 			if(vp.getType().getName().equals(key))
 				return vp.getValue();
+		System.out.println("values are " + values);
 		throw new IllegalArgumentException("There is no field with name " + key);
 	}
 	
@@ -105,6 +108,7 @@ public class RaceProgress {
 		for(ValuePair vp : values)
 			if(vp.getType().getType() == type && vp.getType().getName().equals(key))
 				return vp.getValue();
+		System.out.println("values are " + Arrays.toString(values));
 		throw new IllegalArgumentException("There is no field of type " + type + " with name " + key);
 	}
 	
@@ -148,6 +152,7 @@ public class RaceProgress {
 		for(ValuePair vp : values)
 			if(vp.getType().getType() == type && vp.getType().getName().equals(key))
 				vp.setValue(value);
+		System.out.println("values is " + values);
 		throw new IllegalArgumentException("There is no field with type " + type + " and name " + key);
 	}
 	
@@ -162,6 +167,7 @@ public class RaceProgress {
 				}
 			}
 		}
+		System.out.println("values is " + values);
 		throw new IllegalArgumentException("There is no variable with name " + key);
 	}
 	
@@ -173,28 +179,56 @@ public class RaceProgress {
 		setValue(key, value, ValueType.BYTE);
 	}
 	
+	public void increaseByte(String key, byte amount) {
+		setByte(key, (byte) (getByte(key) + amount));
+	}
+	
 	public void setChar(String key, char value){
 		setValue(key, value, ValueType.CHAR);
+	}
+	
+	public void increaseChar(String key, char amount) {
+		setChar(key, (char) (getChar(key) + amount));
 	}
 	
 	public void setShort(String key, short value){
 		setValue(key, value, ValueType.SHORT);
 	}
 	
+	public void increaseShort(String key, short amount) {
+		setShort(key, (short) (getShort(key) + amount));
+	}
+	
 	public void setInt(String key, int value){
 		setValue(key, value, ValueType.INT);
+	}
+	
+	public void increaseInt(String key, int amount) {
+		setInt(key, getInt(key) + amount);
 	}
 	
 	public void setLong(String key, long value){
 		setValue(key, value, ValueType.LONG);
 	}
 	
+	public void increaseLong(String key, long amount) {
+		setLong(key, getLong(key) + amount);
+	}
+	
 	public void setFloat(String key, float value){
 		setValue(key, value, ValueType.FLOAT);
 	}
 	
+	public void increaseFloat(String key, float amount) {
+		setFloat(key, getFloat(key) + amount);
+	}
+	
 	public void setDouble(String key, double value){
 		setValue(key, value, ValueType.DOUBLE);
+	}
+	
+	public void increaseDouble(String key, double amount) {
+		setDouble(key, getDouble(key) + amount);
 	}
 	
 	public void setString(String key, String value){
