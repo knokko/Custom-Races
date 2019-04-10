@@ -26,6 +26,11 @@ public abstract class ValueType {
 		public Boolean valueOf(String string) {
 			return string.equals("true");
 		}
+		
+		@Override
+		public String toString() {
+			return "ValueType boolean";
+		}
 	};
 	
 	public static final ValueType BYTE = new ValueType((byte)-127){
@@ -48,6 +53,11 @@ public abstract class ValueType {
 		@Override
 		public Byte valueOf(String string) {
 			return Byte.valueOf(string);
+		}
+		
+		@Override
+		public String toString() {
+			return "ValueType byte";
 		}
 	};
 	
@@ -74,6 +84,11 @@ public abstract class ValueType {
 				throw new IllegalArgumentException("The string " + string + " is longer than 1 character!");
 			return string.charAt(0);
 		}
+		
+		@Override
+		public String toString() {
+			return "ValueType char";
+		}
 	};
 	
 	public static final ValueType SHORT = new ValueType((byte)-125){
@@ -96,6 +111,11 @@ public abstract class ValueType {
 		@Override
 		public Short valueOf(String string) {
 			return Short.valueOf(string);
+		}
+		
+		@Override
+		public String toString() {
+			return "ValueType short";
 		}
 	};
 	
@@ -120,6 +140,11 @@ public abstract class ValueType {
 		public Integer valueOf(String string) {
 			return Integer.valueOf(string);
 		}
+		
+		@Override
+		public String toString() {
+			return "ValueType int";
+		}
 	};
 	
 	public static final ValueType LONG = new ValueType((byte)-123){
@@ -142,6 +167,11 @@ public abstract class ValueType {
 		@Override
 		public Long valueOf(String string) {
 			return Long.valueOf(string);
+		}
+		
+		@Override
+		public String toString() {
+			return "ValueType long";
 		}
 	};
 	
@@ -166,6 +196,11 @@ public abstract class ValueType {
 		public Float valueOf(String string) {
 			return Float.valueOf(string);
 		}
+		
+		@Override
+		public String toString() {
+			return "ValueType float";
+		}
 	};
 	
 	public static final ValueType DOUBLE = new ValueType((byte)-121){
@@ -188,6 +223,11 @@ public abstract class ValueType {
 		@Override
 		public Double valueOf(String string) {
 			return Double.valueOf(string);
+		}
+		
+		@Override
+		public String toString() {
+			return "ValueType double";
 		}
 	};
 	
@@ -219,6 +259,11 @@ public abstract class ValueType {
 		public String valueOf(String string) {
 			return string;
 		}
+		
+		@Override
+		public String toString() {
+			return "ValueType String";
+		}
 	};
 	
 	private static final ValueType[] VALUES = {BOOLEAN, BYTE, CHAR, SHORT, INT, LONG, FLOAT, DOUBLE, STRING};
@@ -229,7 +274,7 @@ public abstract class ValueType {
 	
 	private final byte typeID;
 	
-	public ValueType(byte typeID){
+	private ValueType(byte typeID){
 		this.typeID = typeID;
 	}
 	
