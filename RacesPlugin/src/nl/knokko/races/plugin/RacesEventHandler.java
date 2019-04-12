@@ -543,7 +543,6 @@ public class RacesEventHandler implements Listener {
 
 			private PlayerEffectUpdater(Player player) {
 				this.player = player;
-				previousEffects = getCurrentEffects();
 			}
 
 			private Collection<PermanentEffect> getCurrentEffects() {
@@ -553,7 +552,16 @@ public class RacesEventHandler implements Listener {
 
 			private void update() {
 				Collection<PermanentEffect> currentEffects = getCurrentEffects();
-				if (!currentEffects.equals(previousEffects)) {
+				if (previousEffects == null) {
+					
+					// previousEffects will be null during the first update tick
+					// then the potion effects should all be refreshed because races could have changed
+					for (PermanentEffect pe : currentEffects) {
+						player.removePotionEffect(toBukkitEffectType(pe.getType()));
+						player.addPotionEffect(new PotionEffect(toBukkitEffectType(pe.getType()), Integer.MAX_VALUE,
+								pe.getAmplifier(), pe.isAmbient(), pe.hasParticles(), toBukkitColor(pe.getColor())));
+					}
+				} else if (!currentEffects.equals(previousEffects)) {
 					for (PermanentEffect pe : previousEffects)
 						player.removePotionEffect(toBukkitEffectType(pe.getType()));
 					for (PermanentEffect pe : currentEffects)
@@ -565,8 +573,10 @@ public class RacesEventHandler implements Listener {
 			}
 
 			private void quit() {
-				for (PermanentEffect pe : previousEffects)
-					player.removePotionEffect(toBukkitEffectType(pe.getType()));
+				// previousEffects is initially null, so in rare cases, it could still be null
+				if (previousEffects != null)
+					for (PermanentEffect pe : previousEffects)
+						player.removePotionEffect(toBukkitEffectType(pe.getType()));
 			}
 		}
 	}
