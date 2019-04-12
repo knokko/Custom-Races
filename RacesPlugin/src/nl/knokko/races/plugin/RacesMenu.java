@@ -76,13 +76,13 @@ public class RacesMenu {
 		int index = 1;
 		for(RaceChoise choise : visibleChoises) {
 			menu.setItem(index++, Material.PAPER, choise.getDisplayName(), (Player p) -> {
-				CorePlugin.getInstance().getMenuHandler().openMenu(p, createChoiseMenu(choise, race, conditions, player));
+				CorePlugin.getInstance().getMenuHandler().openMenu(p, createChoiseMenu(choise, conditions, player));
 			});
 		}
 		return menu;
 	}
 	
-	private static Menu createChoiseMenu(RaceChoise choise, Race race, RaceStatsConditions conditions, Player player) {
+	private static Menu createChoiseMenu(RaceChoise choise, RaceStatsConditions conditions, Player player) {
 		Collection<Value> values = choise.getAvailableChoises(conditions);
 		Menu menu = new Menu("Choise: " + choise.getDisplayName(), 1 + values.size());
 		menu.setItem(0, Material.BARRIER, "Back", (Player p) -> {
@@ -91,7 +91,7 @@ public class RacesMenu {
 		int index = 0;
 		for(Value value : values) {
 			menu.setItem(index++, Material.IRON_INGOT, value.getName(), (Player p) -> {
-				RaceManager.getProgress(player, race).choose(choise, value);
+				RaceManager.getProgress(player).choose(choise, value);
 				player.sendMessage(ChatColor.GREEN + "Your " + choise.getDisplayName() + " has been changed to " + value.getName() + "!");
 				player.closeInventory();
 			});

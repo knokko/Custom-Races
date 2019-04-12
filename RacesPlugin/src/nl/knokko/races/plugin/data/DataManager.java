@@ -1,8 +1,9 @@
 package nl.knokko.races.plugin.data;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,27 +17,36 @@ import nl.knokko.races.function.Function;
 import nl.knokko.races.function.NamedFunction;
 import nl.knokko.races.plugin.RacesPlugin;
 import nl.knokko.util.bits.BitInput;
-import nl.knokko.util.bits.BooleanArrayBitOutput;
 import nl.knokko.util.bits.ByteArrayBitInput;
+import nl.knokko.util.bits.ByteArrayBitOutput;
 
 public class DataManager {
 	
 	private static final Map<UUID,PlayerData> MAP = new TreeMap<UUID,PlayerData>();
+	
 	private static List<NamedFunction> globalFunctions;
+	
+	private static EncodingMap encodings = new EncodingMap(new File(RacesPlugin.instance().getDataFolder() + "/encodings.bin"));
+	
+	private static File playersFolder;
 	
 	public static void stop(){
 		for(PlayerData pd : MAP.values())
-			pd.onQuit();
+			pd.save();
+		
+		// It's important that the encodings are saved after the players data have been saved
+		encodings.save();
 		try {
 			RacesPlugin.instance().getDataFolder().mkdirs();
-			BooleanArrayBitOutput buffer = new BooleanArrayBitOutput(800);
+			ByteArrayBitOutput buffer = new ByteArrayBitOutput(800);
 			buffer.addInt(globalFunctions.size());
 			for(NamedFunction function : globalFunctions){
 				buffer.addString(function.getName());
 				function.getFunction().save(buffer);
 			}
-			FileOutputStream fileOutput = new FileOutputStream(new File(RacesPlugin.instance().getDataFolder() + "/globalfunctions.list"));
+			OutputStream fileOutput = Files.newOutputStream(new File(RacesPlugin.instance().getDataFolder() + "/globalfunctions.list").toPath());
 			fileOutput.write(buffer.getBytes());
+			fileOutput.flush();
 			fileOutput.close();
 		} catch(IOException ioex){
 			Bukkit.getLogger().warning("Failed to save the global functions: " + ioex.getMessage());
@@ -44,6 +54,7 @@ public class DataManager {
 	}
 	
 	public static void start(){
+		encodings.load();
 		try {
 			File file = new File(RacesPlugin.instance().getDataFolder() + "/globalfunctions.list");
 			BitInput buffer = ByteArrayBitInput.fromFile(file);
@@ -58,14 +69,31 @@ public class DataManager {
 		}
 	}
 	
+	private static File getPlayersFolder() {
+		if (playersFolder == null) {
+			playersFolder = new File(RacesPlugin.instance().getDataFolder() + "/players");
+			playersFolder.mkdirs();
+		}
+		return playersFolder;
+	}
+	
 	public static void join(Player player){
-		PlayerData data = new FilePlayerData(getPlayerFile(player));
-		data.onJoin();
+		PlayerData data = new PlayerData(getPlayersFolder(), player.getUniqueId());
+		data.load(player.getName());
 		MAP.put(player.getUniqueId(), data);
 	}
 	
 	public static void quit(Player player){
-		MAP.remove(player.getUniqueId()).onQuit();
+		PlayerData removed = MAP.remove(player.getUniqueId());
+		if (removed != null) {
+			removed.save();
+		} else {
+			Bukkit.getLogger().warning("Data for player " + player.getName() + " has been cleared before he quit");
+		}
+	}
+	
+	public static EncodingMap getEncodings() {
+		return encodings;
 	}
 	
 	public static PlayerData getPlayerData(Player player){
@@ -73,10 +101,6 @@ public class DataManager {
 		if(data == null)
 			throw new IllegalStateException("player " + player.getName() + " is not marked as online!");
 		return data;
-	}
-	
-	private static File getPlayerFile(Player player){
-		return new File(RacesPlugin.instance().getDataFolder() + File.separator + player.getUniqueId());
 	}
 	
 	public static NamedFunction getGlobalFunction(String name){

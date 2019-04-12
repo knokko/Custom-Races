@@ -1,8 +1,9 @@
 package nl.knokko.races.plugin.data;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,7 +19,7 @@ import nl.knokko.util.bits.BitInput;
 import nl.knokko.util.bits.ByteArrayBitInput;
 import nl.knokko.util.bits.ByteArrayBitOutput;
 
-public class FilePlayerData extends PlayerData {
+public class FilePlayerData extends AbstractPlayerData {
 	
 	private static final String EXTENSION = ".rdat";
 	
@@ -52,11 +53,7 @@ public class FilePlayerData extends PlayerData {
 		else {
 			try {
 				BitInput generalBuffer = ByteArrayBitInput.fromFile(general);
-				int raceLength = generalBuffer.readInt();
-				char[] chars = new char[raceLength];
-				for(int i = 0; i < raceLength; i++)
-					chars[i] = generalBuffer.readChar();
-				race = Race.fromName(new String(chars));
+				race = Race.fromName(generalBuffer.readString());
 			} catch(IOException ex){
 				Bukkit.getLogger().log(Level.WARNING, "Failed to load player data:", ex);
 				createFirstTime();
@@ -75,11 +72,10 @@ public class FilePlayerData extends PlayerData {
 	public void onQuit() {
 		try {
 			ByteArrayBitOutput generalBuffer = new ByteArrayBitOutput(32 + race.getName().length() * 2);
-			generalBuffer.addInt(race.getName().length());
-			for(int i = 0; i < race.getName().length(); i++)
-				generalBuffer.addChar(race.getName().charAt(i));
-			FileOutputStream generalOutput = new FileOutputStream(general);
+			generalBuffer.addString(race.getName());
+			OutputStream generalOutput = Files.newOutputStream(general.toPath());
 			generalOutput.write(generalBuffer.getBytes());
+			generalOutput.flush();
 			generalOutput.close();
 			
 			Iterator<Entry<Race,RaceProgress>> iterator = activeRacesProgress.entrySet().iterator();
@@ -87,8 +83,9 @@ public class FilePlayerData extends PlayerData {
 				Entry<Race,RaceProgress> entry = iterator.next();
 				ByteArrayBitOutput raceBuffer = new ByteArrayBitOutput(entry.getValue().getExpectedBits() / 8 + 1);
 				entry.getValue().save(raceBuffer);
-				FileOutputStream raceOutput = new FileOutputStream(getFile(entry.getKey()));
+				OutputStream raceOutput = Files.newOutputStream(getFile(entry.getKey()).toPath());
 				raceOutput.write(raceBuffer.getBytes());
+				raceOutput.flush();
 				raceOutput.close();
 			}
 		} catch(Exception ex){

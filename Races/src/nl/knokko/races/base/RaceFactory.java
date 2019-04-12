@@ -23,6 +23,7 @@ import nl.knokko.races.event.RaceKillRaceEvent;
 import nl.knokko.races.event.RaceKilledByEntityEvent;
 import nl.knokko.races.event.RaceKilledByRaceEvent;
 import nl.knokko.races.event.RaceLeftClickEvent;
+import nl.knokko.races.event.RaceReceiveExpEvent;
 import nl.knokko.races.event.RaceRightClickEvent;
 import nl.knokko.races.event.RaceUpdateEvent;
 import nl.knokko.races.function.Function;
@@ -326,7 +327,7 @@ public class RaceFactory {
 	public static class SimpleRace extends Race {
 		
 		private static final List<ProgressType> FIELDS = new ArrayList<ProgressType>(0);
-		private static final Collection<RaceChoise> CHOISES = new ArrayList<RaceChoise>(0);
+		private static final List<RaceChoise> CHOISES = new ArrayList<RaceChoise>(0);
 		private static final List<NamedFunction> FUNCTIONS = new ArrayList<NamedFunction>(0);
 		
 		private final byte extraHealth;
@@ -429,7 +430,7 @@ public class RaceFactory {
 		}
 
 		@Override
-		public Collection<RaceChoise> getChoises() {
+		public List<RaceChoise> getChoises() {
 			return CHOISES;
 		}
 
@@ -636,6 +637,9 @@ public class RaceFactory {
 
 		@Override
 		public void raceDie(RaceDieEvent event) {}
+
+		@Override
+		public void onReceiveXP(RaceReceiveExpEvent event) {}
 	}
 	
 	public static class AdvancedRace extends Race {
@@ -760,7 +764,7 @@ public class RaceFactory {
 		}
 
 		@Override
-		public Collection<RaceChoise> getChoises() {
+		public List<RaceChoise> getChoises() {
 			return choises;
 		}
 		
@@ -1017,6 +1021,12 @@ public class RaceFactory {
 
 		@Override
 		public void raceDie(RaceDieEvent event) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onReceiveXP(RaceReceiveExpEvent event) {
 			// TODO Auto-generated method stub
 			
 		}

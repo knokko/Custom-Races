@@ -2,9 +2,7 @@ package nl.knokko.races.progress;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import nl.knokko.races.base.Race;
 import nl.knokko.races.progress.RaceChoise.Value;
@@ -20,13 +18,14 @@ public class RaceProgress {
 	
 	public RaceProgress(Race race){
 		this.race = race;
-		List<ProgressType> types = race.getFields();
-		values = new ValuePair[types.size()];
+		List<ProgressType> fields = race.getFields();
+		values = new ValuePair[fields.size()];
 		int i = 0;
-		for(ProgressType pt : types){
+		for(ProgressType pt : fields){
 			values[i] = new ValuePair(pt);
 			i++;
 		}
+		
 		Collection<RaceChoise> choises = race.getChoises();
 		this.choises = new ChoisePair[choises.size()];
 		i = 0;
@@ -41,50 +40,23 @@ public class RaceProgress {
 	}
 	
 	public void save(BitOutput buffer){
-		buffer.addInt(values.length);
+		
+		buffer.ensureExtraCapacity(getExpectedBits());
 		for(ValuePair vp : values){
-			buffer.addString(vp.getType().getName());
 			vp.getType().getType().save(buffer, vp.getValue());
 		}
-		Map<String,String> choiseMap = new HashMap<String,String>(values.length);
-		for(ChoisePair cp : choises)
-			choiseMap.put(cp.getChoise().getID(), cp.getValue().getName());
-		buffer.addStringMap(choiseMap);
 		for(ChoisePair cp : choises)
 			cp.getChoise().saveValue(cp.getValue(), buffer);
 	}
 	
 	public void load(BitInput buffer){
-		//for(ValuePair vp : values)
-			//vp.setValue(vp.getType().getType().load(buffer));
-		
-		int size = buffer.readInt();
-		for(int i = 0; i < size; i++){
-			String name = buffer.readString();
-			for(ValuePair vp : values){
-				if(vp.getType().getName().equals(name)){
-					vp.setValue(vp.getType().getType().load(buffer));
-					name = null;
-					break;
-				}
-			}
-			if(name != null)
-				System.out.println("It looks like the variable with name " + name + " has been removed.");
+		for (ValuePair vp : values) {
+			vp.setValue(vp.getType().getType().load(buffer));
 		}
 		
-		Map<String,String> choiseMap = buffer.readStringHashMap();
-		for(ChoisePair cp : choises){
-			String value = choiseMap.get(cp.getChoise().getID());
-			if(value != null)
-				cp.setValue(cp.getChoise().getByString(value));
-			else {
-				cp.setValue(cp.getChoise().getDefaultValue());
-				System.out.println("The value for choise " + cp.getChoise().getID() + " can't be loaded, is it new?");
-			}
-		}
-		System.out.println("Choises are " + choises);
-		for(ChoisePair cp : choises)
+		for(ChoisePair cp : choises) {
 			cp.setValue(cp.getChoise().loadValue(buffer));
+		}
 	}
 	
 	public int getExpectedBits(){
@@ -100,7 +72,7 @@ public class RaceProgress {
 		for(ValuePair vp : values)
 			if(vp.getType().getName().equals(key))
 				return vp.getValue();
-		System.out.println("values are " + values);
+		System.out.println("values are " + Arrays.toString(values));
 		throw new IllegalArgumentException("There is no field with name " + key);
 	}
 	
@@ -149,11 +121,71 @@ public class RaceProgress {
 	}
 	
 	public void setValue(String key, Object value, ValueType type){
-		for(ValuePair vp : values)
-			if(vp.getType().getType() == type && vp.getType().getName().equals(key))
+		for(ValuePair vp : values) {
+			if(vp.getType().getType() == type && vp.getType().getName().equals(key)) {
 				vp.setValue(value);
-		System.out.println("values is " + values);
+				return;
+			}
+		}
+		System.out.println("values is " + Arrays.toString(values));
 		throw new IllegalArgumentException("There is no field with type " + type + " and name " + key);
+	}
+	
+	/**
+	 * Attempts to set the value for the specified key. The return value of this method will tell whether or
+	 * not the operation succeeded. If the value for the given key can't be set, this RaceProgress instance
+	 * won't be changed.
+	 * @param key The name/key of the value to set
+	 * @param value The new value to give to the specified key
+	 * @param type The type of the new value
+	 * @return the result of this method
+	 */
+	public MaybeResult maybeSetValue(String key, Object value, ValueType type) {
+		for (ValuePair vp : values) {
+			if (vp.getType().getName().equals(key)) {
+				ValueType ownType = vp.getType().getType();
+				if (ownType == type) {
+					vp.setValue(value);
+					return MaybeResult.SUCCESS;
+				} else {
+					
+					// Now we check if we can upgrade the type
+					if (ownType.canConvertFrom(type)) {
+						vp.setValue(ownType.valueOf(value.toString()));
+						return MaybeResult.UPGRADED_TYPE;
+					} else {
+						return MaybeResult.TYPE_FAIL;
+					}
+				}
+			}
+		}
+		return MaybeResult.FAIL;
+	}
+	
+	public static enum MaybeResult {
+		
+		/**
+		 * The operation succeeded normally.
+		 */
+		SUCCESS,
+		
+		/**
+		 * The operation has succeeded, but type conversion took place because the given type
+		 * was not equal to this type and this type was capable of taking the value over
+		 * from the other type.
+		 */
+		UPGRADED_TYPE,
+		
+		/**
+		 * The operation failed because the given type wasn't equal to this type and we can not
+		 * safely convert values from the given type to this type.
+		 */
+		TYPE_FAIL,
+		
+		/**
+		 * The operation failed because this race progress doesn't have a variable with the given key.
+		 */
+		FAIL;
 	}
 	
 	public void setValueOf(String key, String value){
@@ -245,9 +277,14 @@ public class RaceProgress {
 	}
 	
 	public void choose(RaceChoise choise, Value value){
-		for(ChoisePair cp : choises)
-			if(cp.getChoise().equals(choise))
+		for(ChoisePair cp : choises) {
+			if(cp.getChoise().equals(choise)) {
 				cp.setValue(value);
+				return;
+			}
+		}
+		System.out.println("choises are " + Arrays.toString(choises));
+		throw new IllegalArgumentException("Race " + race + " doesn't have choise " + choise);
 	}
 	
 	public RaceChoise getChoise(String choise){

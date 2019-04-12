@@ -22,6 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -102,10 +103,6 @@ public class RaceManager {
 	
 	public static void setDefaultRace(Race newDefaultRace) {
 		defaultRace = newDefaultRace;
-	}
-	
-	public static RaceProgress getProgress(Player player, Race race){
-		return DataManager.getPlayerData(player).getProgress(race);
 	}
 	
 	public static RaceProgress getProgress(Player player){
@@ -201,7 +198,10 @@ public class RaceManager {
 		@Override
 		public double getAttackDamage() {
 			if (entity instanceof Attributable) {
-				return ((Attributable) entity).getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).getValue();
+				AttributeInstance ai = ((Attributable) entity).getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
+				if (ai != null) {
+					return ai.getValue();
+				}
 			}
 			return 0;
 		}
@@ -274,7 +274,7 @@ public class RaceManager {
 		}
 	}
 	
-	private static class BukkitRaceConditions implements RaceStatsConditions {
+	public static class BukkitRaceConditions implements RaceStatsConditions {
 		
 		final Player player;
 		final Race race;
@@ -284,12 +284,16 @@ public class RaceManager {
 			this.race = race;
 		}
 		
+		public Player getPlayer() {
+			return player;
+		}
+		
 		public Race getRace(){
 			return race;
 		}
 		
 		public RaceProgress getProgress() {
-			return RaceManager.getProgress(player, race);
+			return RaceManager.getProgress(player);
 		}
 
 		public long getWorldTime() {

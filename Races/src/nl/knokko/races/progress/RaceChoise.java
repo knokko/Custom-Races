@@ -89,8 +89,7 @@ public class RaceChoise {
 		for(Value value : choises)
 			if(value.name.equals(string))
 				return value;
-		System.out.println("It seems like the option " + string + " of " + id + " has been removed; setting default value");
-		return getDefaultValue();
+		return null;
 	}
 	
 	public void saveValue(Value value, BitOutput buffer){

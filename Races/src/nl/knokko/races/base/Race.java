@@ -19,6 +19,7 @@ import nl.knokko.races.event.RaceKillRaceEvent;
 import nl.knokko.races.event.RaceKilledByEntityEvent;
 import nl.knokko.races.event.RaceKilledByRaceEvent;
 import nl.knokko.races.event.RaceLeftClickEvent;
+import nl.knokko.races.event.RaceReceiveExpEvent;
 import nl.knokko.races.event.RaceRightClickEvent;
 import nl.knokko.races.event.RaceUpdateEvent;
 import nl.knokko.races.function.Function;
@@ -120,7 +121,7 @@ public abstract class Race {
 	
 	public abstract Collection<PermanentEffect> getPermanentEffects(RaceStatsConditions stats);
 	
-	public abstract Collection<RaceChoise> getChoises();
+	public abstract List<RaceChoise> getChoises();
 	
 	public boolean isImmune(ReflectedCause cause, RaceStatsConditions stats){
 		return getResistance(cause, stats) >= 1;
@@ -166,6 +167,8 @@ public abstract class Race {
 	
 	public abstract void raceDie(RaceDieEvent event);
 	
+	public abstract void onReceiveXP(RaceReceiveExpEvent event);
+	
 	/**
 	 * Determines the progress of a level-up that a player should see in his xp bar. It should have a value
 	 * between 0 and 1 if this is used. The value should be NaN if the vanilla level system should be
@@ -185,5 +188,19 @@ public abstract class Race {
 	 */
 	public int getLevelToShow(RaceStatsConditions stats) {
 		return -1;
+	}
+	
+	/**
+	 * This method will be called when the plug-in sets the update agent for this race. By default, this
+	 * method will do nothing, but it can be overridden. Custom race classes can override this to get
+	 * access to the update agent and force them to do extra updates whenever it needs an update.
+	 */
+	public void setUpdater(UpdateAgent updater) {}
+	
+	public static interface UpdateAgent {
+		
+		void updateLevel(RaceStatsConditions stats);
+		
+		void updateAttributes(RaceStatsConditions stats);
 	}
 }
